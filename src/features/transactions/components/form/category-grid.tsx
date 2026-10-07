@@ -4,7 +4,7 @@ import { AppText } from '@/src/components/ui/app-text';
 import { Icon } from '@/src/components/ui/icon';
 import { colors, radii, spacing, withAlpha } from '@/src/theme';
 
-import { CATEGORIES, CATEGORY_IDS_BY_TYPE } from '../../constants';
+import { useActiveCategories } from '../../hooks/use-transactions';
 import type { CategoryId, TransactionType } from '../../types';
 import { CategoryIcon } from '../category-icon';
 
@@ -18,15 +18,16 @@ type CategoryGridProps = {
 const COLUMNS = 5;
 
 export function CategoryGrid({ type, value, onChange, onAddCategory }: CategoryGridProps) {
+  const categories = useActiveCategories(type);
+
   return (
     <View style={styles.card}>
       <AppText size="base" weight="semibold" style={styles.title}>
         Danh mục
       </AppText>
       <View style={styles.grid}>
-        {CATEGORY_IDS_BY_TYPE[type].map((id) => {
+        {categories.map(({ id, name, color }) => {
           const selected = id === value;
-          const color = CATEGORIES[id].color;
           return (
             <Pressable
               key={id}
@@ -38,7 +39,7 @@ export function CategoryGrid({ type, value, onChange, onAddCategory }: CategoryG
                 <CategoryIcon categoryId={id} size={50} filled={selected} />
               </View>
               <AppText size="xs" weight={selected ? 'semibold' : 'regular'} numberOfLines={1}>
-                {CATEGORIES[id].name}
+                {name}
               </AppText>
             </Pressable>
           );

@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import { showToast } from '@/src/stores/toast-store';
 
-import { CATEGORY_IDS_BY_TYPE } from '../constants';
+import { addTransaction, updateTransaction } from '../api/transactions-api';
 import {
   emptyFormValues,
   formValuesFromTransaction,
@@ -13,13 +13,13 @@ import {
   type TransactionFormErrors,
   type TransactionFormValues,
 } from '../schemas/transaction-form';
-import { addTransaction, getTransaction, updateTransaction } from '../stores/transactions-store';
+import { getActiveCategories, getTransaction } from '../stores/finance-store';
 import type { TransactionType } from '../types';
 
 export function useTransactionForm(editingId?: string) {
   const [editing] = useState(() => (editingId ? getTransaction(editingId) : undefined));
   const [values, setValues] = useState<TransactionFormValues>(() =>
-    editing ? formValuesFromTransaction(editing) : emptyFormValues(),
+    editing ? formValuesFromTransaction(editing) : emptyFormValues(getActiveCategories('expense')[0]?.id ?? ''),
   );
   const [errors, setErrors] = useState<TransactionFormErrors>({});
 
@@ -28,8 +28,8 @@ export function useTransactionForm(editingId?: string) {
 
   const setType = (type: TransactionType) =>
     setValues((v) => {
-      const ids = CATEGORY_IDS_BY_TYPE[type];
-      return { ...v, type, categoryId: ids.includes(v.categoryId) ? v.categoryId : ids[0] };
+      const ids = getActiveCategories(type).map((c) => c.id);
+      return { ...v, type, categoryId: ids.includes(v.categoryId) ? v.categoryId : (ids[0] ?? '') };
     });
 
   const setAmount = (input: string) => {
@@ -44,7 +44,7 @@ export function useTransactionForm(editingId?: string) {
     if (Object.values(nextErrors).some(Boolean)) return;
 
     const draft = toTransactionDraft(values);
-    if (editing) updateTransaction(editing.id, draft);
+    if (editing) updateTransaction(editing, draft);
     else addTransaction(draft);
 
     router.back();

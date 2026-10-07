@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { Icon } from '@/src/components/ui/icon';
 import { colors, withAlpha } from '@/src/theme';
 
-import { CATEGORIES } from '../constants';
+import { useCategory } from '../hooks/use-transactions';
 import type { CategoryId } from '../types';
 
 type CategoryIconProps = {
@@ -14,7 +14,7 @@ type CategoryIconProps = {
 };
 
 export function CategoryIcon({ categoryId, size = 42, filled }: CategoryIconProps) {
-  const category = CATEGORIES[categoryId];
+  const category = useCategory(categoryId);
   return (
     <View
       style={[

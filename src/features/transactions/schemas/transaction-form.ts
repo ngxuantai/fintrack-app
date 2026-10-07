@@ -18,11 +18,11 @@ export type TransactionFormErrors = Partial<Record<keyof TransactionFormValues, 
 
 export const MAX_AMOUNT_DIGITS = 11;
 
-export function emptyFormValues(today = new Date()): TransactionFormValues {
+export function emptyFormValues(categoryId: CategoryId, today = new Date()): TransactionFormValues {
   return {
     type: 'expense',
     amount: '',
-    categoryId: 'food',
+    categoryId,
     date: toISODate(today),
     walletId: 'cash',
     note: '',
@@ -50,6 +50,7 @@ export function sanitizeAmount(input: string) {
 export function validateTransactionForm(values: TransactionFormValues): TransactionFormErrors {
   const errors: TransactionFormErrors = {};
   if (!parseInt(values.amount || '0', 10)) errors.amount = 'Vui lòng nhập số tiền giao dịch';
+  if (!values.categoryId) errors.categoryId = 'Vui lòng chọn danh mục';
   return errors;
 }
 

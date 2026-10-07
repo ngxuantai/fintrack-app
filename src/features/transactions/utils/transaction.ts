@@ -18,9 +18,9 @@ export function transactionSubtitle(tx: Pick<Transaction, 'note' | 'walletId'>) 
   return tx.note ? `${tx.note} · ${wallet}` : wallet;
 }
 
-/** Newest first; ties keep insertion order (newest added first). */
+/** Newest first; same-day rows by creation time, newest first. */
 export function sortByDateDesc(list: Transaction[]) {
-  return [...list].sort((a, b) => b.date.localeCompare(a.date));
+  return [...list].sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
 }
 
 export function sumByType(list: Transaction[], type: Transaction['type']) {

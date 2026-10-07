@@ -1,9 +1,9 @@
 import { toMonthKey } from '@/src/lib/date';
 import { normalizeSearch } from '@/src/lib/format';
 
-import { CATEGORIES } from '../constants';
-import type { Transaction, TypeFilter, WalletId } from '../types';
+import type { Category, Transaction, TypeFilter, WalletId } from '../types';
 
+import { resolveCategory } from './category';
 import { signedAmount } from './transaction';
 
 export type TransactionFilters = {
@@ -13,13 +13,17 @@ export type TransactionFilters = {
   query: string;
 };
 
-export function filterTransactions(list: Transaction[], filters: TransactionFilters) {
+export function filterTransactions(
+  list: Transaction[],
+  filters: TransactionFilters,
+  categoryById: Record<string, Category>,
+) {
   const query = normalizeSearch(filters.query.trim());
   return list.filter((tx) => {
     if (toMonthKey(tx.date) !== filters.month) return false;
     if (filters.type !== 'all' && tx.type !== filters.type) return false;
     if (filters.walletId && tx.walletId !== filters.walletId) return false;
-    if (query && !normalizeSearch(`${tx.note} ${CATEGORIES[tx.categoryId].name}`).includes(query)) return false;
+    if (query && !normalizeSearch(`${tx.note} ${resolveCategory(categoryById, tx.categoryId).name}`).includes(query)) return false;
     return true;
   });
 }

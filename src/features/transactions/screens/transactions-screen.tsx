@@ -8,6 +8,7 @@ import { ScreenTitle } from '@/src/components/ui/screen-title';
 import { showToast } from '@/src/stores/toast-store';
 import { colors, screenPadding, spacing, tabBarClearance } from '@/src/theme';
 
+import { deleteTransaction } from '../api/transactions-api';
 import { DaySectionHeader } from '../components/day-section-header';
 import { SearchBar } from '../components/search-bar';
 import { SwipeableTransactionRow } from '../components/swipeable-transaction-row';
@@ -16,7 +17,6 @@ import { NoMatchingTransactions, TransactionsEmptyState } from '../components/tr
 import { TypeFilterBar } from '../components/type-filter-bar';
 import { WalletFilter } from '../components/wallet-filter';
 import { useTransactionFilters } from '../hooks/use-transaction-filters';
-import { deleteTransaction } from '../stores/transactions-store';
 import type { Transaction } from '../types';
 import { openTransactionForm } from '../utils/navigation';
 
@@ -34,7 +34,7 @@ export function TransactionsScreen() {
   const handleEdit = useCallback((tx: Transaction) => openTransactionForm(tx.id), []);
 
   const handleDelete = useCallback((tx: Transaction) => {
-    const restore = deleteTransaction(tx.id);
+    const restore = deleteTransaction(tx);
     showToast('Đã xóa giao dịch', { label: 'Hoàn tác', onPress: restore });
   }, []);
 

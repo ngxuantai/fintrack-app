@@ -1,13 +1,17 @@
 import { addDays, toISODate } from '@/src/lib/date';
 
-import type { CategoryId, Transaction, TransactionType, WalletId } from '../types';
+import type { CategoryId, TransactionDraft, TransactionType, WalletId } from '../types';
 
-/** Balance shown on the overview when using the mock data. */
-export const MOCK_TOTAL_BALANCE = 42_680_000;
+/** Wallet balances before the demo transactions. */
+export const MOCK_OPENING_BALANCES: Record<WalletId, number> = {
+  cash: 3_500_000,
+  bank: 22_000_000,
+  ewallet: 1_200_000,
+};
 
 type SeedRow = [daysAgo: number, type: TransactionType, categoryId: CategoryId, amount: number, note: string, walletId: WalletId];
 
-// Dates are relative to today so the demo data always looks fresh.
+// Dates are relative to the day the account is seeded. Newest first.
 const SEED: SeedRow[] = [
   [0, 'expense', 'food', 55_000, 'Phở bò', 'cash'],
   [0, 'expense', 'move', 38_000, 'Grab đi làm', 'ewallet'],
@@ -34,9 +38,8 @@ const SEED: SeedRow[] = [
   [51, 'income', 'salary', 18_000_000, 'Lương tháng trước', 'bank'],
 ];
 
-export function createMockTransactions(today = new Date()): Transaction[] {
-  return SEED.map(([daysAgo, type, categoryId, amount, note, walletId], index) => ({
-    id: `seed-${index + 1}`,
+export function createMockTransactions(today = new Date()): TransactionDraft[] {
+  return SEED.map(([daysAgo, type, categoryId, amount, note, walletId]) => ({
     date: toISODate(addDays(today, -daysAgo)),
     type,
     categoryId,

@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { AppText } from '@/src/components/ui/app-text';
 import { colors, spacing } from '@/src/theme';
 
-import { CATEGORIES } from '../constants';
+import { useCategory } from '../hooks/use-transactions';
 import type { Transaction } from '../types';
 import { formatTransactionAmount, transactionSubtitle } from '../utils/transaction';
 
@@ -19,13 +19,14 @@ type TransactionRowProps = {
 /** Presentational row: category icon, title/subtitle, signed amount. */
 export const TransactionRow = memo(function TransactionRow({ transaction, showDivider }: TransactionRowProps) {
   const isIncome = transaction.type === 'income';
+  const category = useCategory(transaction.categoryId);
 
   return (
     <View style={[styles.row, showDivider && styles.divider]}>
       <CategoryIcon categoryId={transaction.categoryId} />
       <View style={styles.body}>
         <AppText size="lg" weight="semibold">
-          {CATEGORIES[transaction.categoryId].name}
+          {category.name}
         </AppText>
         <AppText size="sm" color={colors.textMuted} numberOfLines={1} style={styles.subtitle}>
           {transactionSubtitle(transaction)}

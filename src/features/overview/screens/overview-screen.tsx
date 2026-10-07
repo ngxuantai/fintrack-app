@@ -4,7 +4,7 @@ import { ScrollView, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { SegmentedControl } from '@/src/components/ui/segmented-control';
-import { useTotalBalance } from '@/src/features/transactions';
+import { useAccount, useTotalBalance } from '@/src/features/transactions';
 import { colors, screenPadding, spacing, tabBarClearance } from '@/src/theme';
 
 import { BalanceCard } from '../components/balance-card';
@@ -13,10 +13,10 @@ import { CategorySpendingCard } from '../components/category-spending-card';
 import { GreetingHeader } from '../components/greeting-header';
 import { RecentTransactions } from '../components/recent-transactions';
 import { SectionHeader } from '../components/section-header';
-import { MOCK_USER, PERIOD_OPTIONS } from '../constants';
+import { PERIOD_OPTIONS } from '../constants';
 import { useOverviewStats } from '../hooks/use-overview-stats';
 import type { AnalyticsPeriod } from '../types';
-import { greetingFor } from '../utils/analytics';
+import { greetingFor, initialsOf } from '../utils/analytics';
 
 const RECENT_COUNT = 5;
 
@@ -25,6 +25,7 @@ export function OverviewScreen() {
   const [hidden, setHidden] = useState(false);
   const [period, setPeriod] = useState<AnalyticsPeriod>('month');
   const balance = useTotalBalance();
+  const displayName = useAccount()?.displayName ?? '';
   const stats = useOverviewStats(period);
 
   return (
@@ -34,8 +35,8 @@ export function OverviewScreen() {
       showsVerticalScrollIndicator={false}>
       <GreetingHeader
         greeting={greetingFor(stats.today)}
-        name={MOCK_USER.name}
-        initials={MOCK_USER.initials}
+        name={displayName}
+        initials={initialsOf(displayName)}
         hasNotifications
       />
 

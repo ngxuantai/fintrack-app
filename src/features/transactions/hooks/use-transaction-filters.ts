@@ -2,18 +2,17 @@ import { useMemo, useState } from 'react';
 
 import { addMonths, toISODate, toMonthKey } from '@/src/lib/date';
 
+import { SYNCED_MONTHS } from '../constants';
 import type { TypeFilter, WalletId } from '../types';
 import { filterTransactions, groupByDay } from '../utils/filter-transactions';
 import { sumByType } from '../utils/transaction';
 
-import { useTransactions } from './use-transactions';
-
-const MONTHS_TO_SHOW = 3;
+import { useCategoryMap, useTransactions } from './use-transactions';
 
 export type MonthOption = { value: string; label: string; shortLabel: string };
 
 function buildMonthOptions(today: Date): MonthOption[] {
-  return Array.from({ length: MONTHS_TO_SHOW }, (_, i) => {
+  return Array.from({ length: SYNCED_MONTHS }, (_, i) => {
     const d = addMonths(today, -i);
     const m = d.getMonth() + 1;
     const y = d.getFullYear();
@@ -23,6 +22,7 @@ function buildMonthOptions(today: Date): MonthOption[] {
 
 export function useTransactionFilters() {
   const transactions = useTransactions();
+  const categoryById = useCategoryMap();
   const monthOptions = useMemo(() => buildMonthOptions(new Date()), []);
 
   const [query, setQuery] = useState('');
@@ -31,8 +31,8 @@ export function useTransactionFilters() {
   const [month, setMonth] = useState(monthOptions[0].value);
 
   const filtered = useMemo(
-    () => filterTransactions(transactions, { month, type, walletId, query }),
-    [transactions, month, type, walletId, query],
+    () => filterTransactions(transactions, { month, type, walletId, query }, categoryById),
+    [transactions, month, type, walletId, query, categoryById],
   );
   const sections = useMemo(() => groupByDay(filtered), [filtered]);
 
