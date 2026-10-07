@@ -1,0 +1,43 @@
+rules_version = '2';
+
+// Paste into Firebase Console → Firestore Database → Rules (or deploy with the Firebase CLI).
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Personal-use phase: only this account may access data. Remove the check when opening up to more users.
+    function isOwner(uid) {
+      return request.auth != null
+        && request.auth.uid == uid
+        && request.auth.uid == 'REPLACE_WITH_YOUR_UID';
+    }
+
+    match /users/{uid} {
+      allow read, write: if isOwner(uid);
+
+      match /categories/{categoryId} {
+        allow read: if isOwner(uid);
+        allow create, update: if isOwner(uid)
+          && request.resource.data.type in ['expense', 'income']
+          && request.resource.data.name is string
+          && request.resource.data.name.size() > 0;
+        // Categories are archived, never deleted: transactions keep referencing them.
+        allow delete: if false;
+      }
+
+      match /transactions/{txId} {
+        allow read, delete: if isOwner(uid);
+        allow create, update: if isOwner(uid)
+          && request.resource.data.type in ['expense', 'income']
+          && request.resource.data.walletId in ['cash', 'bank', 'ewallet']
+          && request.resource.data.amount is int
+          && request.resource.data.amount > 0
+          && request.resource.data.date is string
+          && request.resource.data.date.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+          && request.resource.data.categoryId is string;
+      }
+
+      match /monthlyStats/{month} {
+        allow read, write: if isOwner(uid);
+      }
+    }
+  }
+}
