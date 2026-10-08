@@ -6,6 +6,7 @@ import { categoryPalette } from '@/src/theme';
 import { CATEGORY_ICONS, SYNCED_MONTHS, WALLET_IDS } from '../constants';
 import { financeStore } from '../stores/finance-store';
 import type { Account, Category, MonthlyStats, Transaction, WalletId } from '../types';
+import { mergeCategories } from '../utils/category';
 import { sortByDateDesc } from '../utils/transaction';
 
 import { categoriesCol, monthlyStatsCol, transactionsCol, userRef } from './refs';
@@ -20,6 +21,7 @@ function toAccount(data: DocumentData | undefined): Account {
   return { displayName: data?.displayName ?? '', balances };
 }
 
+/** A user-created category; built-in defaults live in code, not Firestore. */
 function toCategory(snap: DocumentSnapshot): Category {
   const d = snap.data() ?? {};
   return {
@@ -29,7 +31,7 @@ function toCategory(snap: DocumentSnapshot): Category {
     color: categoryPalette[d.color as keyof typeof categoryPalette] ?? categoryPalette.gray,
     icon: CATEGORY_ICONS[d.icon as keyof typeof CATEGORY_ICONS] ?? CATEGORY_ICONS.dots,
     order: d.order ?? 0,
-    isDefault: !!d.isDefault,
+    isDefault: false,
     archived: !!d.archived,
   };
 }
@@ -96,8 +98,8 @@ export function startFinanceSync(uid: string) {
         onSnapshot(
           categoriesCol(uid),
           (snap) => {
-            const categories = snap.docs.map(toCategory).sort((a, b) => a.order - b.order);
-            set({ categories, categoryById: Object.fromEntries(categories.map((c) => [c.id, c])) });
+            // Older accounts still hold copies of the defaults; mergeCategories drops them.
+            set(mergeCategories(snap.docs.map(toCategory)));
             loaded('categories');
           },
           onError,

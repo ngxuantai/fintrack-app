@@ -3,17 +3,18 @@ import { doc, getDoc, serverTimestamp, Timestamp, writeBatch } from 'firebase/fi
 import { defaultDisplayName, seedMockData } from '@/config/firebase';
 import { db } from '@/src/lib/firebase';
 
-import { DEFAULT_CATEGORIES, WALLET_IDS } from '../constants';
+import { WALLET_IDS } from '../constants';
 import type { WalletId } from '../types';
 
 import { applyTransaction, emptyDelta, writeMonthDeltas } from './aggregates';
 import { createMockTransactions, MOCK_OPENING_BALANCES } from './mock-transactions';
 import { toTransactionDoc } from './transactions-api';
-import { categoryRef, transactionsCol, userRef } from './refs';
+import { transactionsCol, userRef } from './refs';
 
 /**
- * First launch for this account: creates the profile, the default categories and,
+ * First launch for this account: creates the profile and,
  * when EXPO_PUBLIC_SEED_MOCK_DATA=true, the demo transactions — all in one batch.
+ * Default categories are not stored: they live in code (DEFAULT_CATEGORIES).
  */
 export async function ensureUserData(uid: string) {
   const snapshot = await getDoc(userRef(uid));
@@ -21,10 +22,6 @@ export async function ensureUserData(uid: string) {
 
   const batch = writeBatch(db);
   const now = serverTimestamp();
-
-  DEFAULT_CATEGORIES.forEach(({ id, ...category }, order) => {
-    batch.set(categoryRef(uid, id), { ...category, order, isDefault: true, archived: false, createdAt: now, updatedAt: now });
-  });
 
   const balances = Object.fromEntries(WALLET_IDS.map((id) => [id, 0])) as Record<WalletId, number>;
 

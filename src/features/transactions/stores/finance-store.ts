@@ -1,12 +1,13 @@
 import { createStore } from '@/src/lib/create-store';
 
 import type { Account, Category, MonthlyStats, Transaction } from '../types';
+import { mergeCategories } from '../utils/category';
 
 type FinanceState = {
   status: 'idle' | 'loading' | 'ready' | 'error';
   error: string | null;
   account: Account | null;
-  /** Sorted by `order`, archived included. */
+  /** Built-in defaults, then the user's own categories by `order`; archived included. */
   categories: Category[];
   categoryById: Record<string, Category>;
   /** Synced window only (see SYNCED_MONTHS), newest first. */
@@ -19,8 +20,8 @@ export const financeStore = createStore<FinanceState>({
   status: 'idle',
   error: null,
   account: null,
-  categories: [],
-  categoryById: {},
+  // Defaults are available before (and without) the first Firestore snapshot.
+  ...mergeCategories([]),
   transactions: [],
   monthlyStats: {},
 });

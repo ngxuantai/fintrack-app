@@ -23,7 +23,10 @@ export type CategoryIconKey = keyof typeof CATEGORY_ICONS;
 
 export type DefaultCategory = { id: CategoryId; type: TransactionType; name: string; color: CategoryColorKey; icon: CategoryIconKey };
 
-/** Seeded into users/{uid}/categories on first launch; array order becomes `order`. */
+/**
+ * Built-in categories shared by every user, kept in code only (never written to Firestore).
+ * Ids are referenced by stored transactions: never rename or remove one. Array order is display order.
+ */
 export const DEFAULT_CATEGORIES: DefaultCategory[] = [
   { id: 'food', type: 'expense', name: 'Ăn uống', color: 'orange', icon: 'food' },
   { id: 'move', type: 'expense', name: 'Di chuyển', color: 'blue', icon: 'move' },
