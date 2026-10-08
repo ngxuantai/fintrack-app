@@ -10,10 +10,10 @@ The app talks to Firebase directly (Auth + Cloud Firestore) through the Firebase
 3. **Firestore Database** → create the database (Standard edition, id `(default)`, production mode).
 4. Deploy the security rules (see below).
 5. `cp .env.example .env.local` and fill in the values. `.env.local` is gitignored — never commit it.
-6. `npx expo start`. On first launch the app creates your profile and, if
-   `EXPO_PUBLIC_SEED_MOCK_DATA=true`, the demo transactions.
+6. `npx expo start`. On first launch the app creates your profile with zero balances.
 
-To reseed, delete `users/{uid}` and its subcollections in the console, then restart the app.
+To start over, delete `users/{uid}` and its subcollections (`npx firebase-tools firestore:delete users/<uid> --recursive`),
+then restart the app.
 
 ## Sign-in
 

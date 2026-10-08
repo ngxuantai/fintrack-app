@@ -26,6 +26,3 @@ export const devCredentials = {
 
 /** Display name written to the user profile on first launch. */
 export const defaultDisplayName = process.env.EXPO_PUBLIC_DISPLAY_NAME || 'Bạn';
-
-/** Seeds the mock transactions on first launch (empty account otherwise). */
-export const seedMockData = process.env.EXPO_PUBLIC_SEED_MOCK_DATA === 'true';
