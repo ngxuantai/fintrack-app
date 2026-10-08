@@ -12,6 +12,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.xuantai.fintrack",
       "adaptiveIcon": {
         "backgroundColor": "#3E5BF2",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -49,3 +50,4 @@
     "owner": "xuantai"
   }
 }
+
