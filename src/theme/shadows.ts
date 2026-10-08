@@ -31,6 +31,9 @@ export const shadows = {
   segmentActive: {
     boxShadow: [{ offsetX: 0, offsetY: 1, blurRadius: 3, color: 'rgba(21,26,45,0.1)' }],
   },
+  splashLogo: {
+    boxShadow: [{ offsetX: 0, offsetY: 16, blurRadius: 48, color: 'rgba(62,91,242,0.35)' }],
+  },
   illustration: {
     boxShadow: [{ offsetX: 0, offsetY: 10, blurRadius: 22, spreadDistance: -10, color: 'rgba(62,91,242,0.45)' }],
   },

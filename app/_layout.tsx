@@ -7,6 +7,7 @@ import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 
+import { AppSplash } from '@/src/components/app-splash';
 import { StartupError } from '@/src/components/startup-error';
 import { ToastHost } from '@/src/components/toast';
 import { useFinanceSync } from '@/src/features/transactions';
@@ -14,6 +15,7 @@ import { startSession, useSession } from '@/src/stores/session-store';
 import { colors, fontAssets } from '@/src/theme';
 
 SplashScreen.preventAutoHideAsync();
+SplashScreen.setOptions({ fade: true, duration: 200 });
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -26,14 +28,16 @@ export default function RootLayout() {
 
   useEffect(() => startSession(), []);
 
+  const fontsReady = fontsLoaded || !!fontError;
   const failed = session.status === 'error' || sync.status === 'error';
-  const ready = (fontsLoaded || !!fontError) && (sync.status === 'ready' || failed);
+  const dataReady = sync.status === 'ready';
 
+  // The native splash only waits for fonts; AppSplash covers the session + first data load.
   useEffect(() => {
-    if (ready) SplashScreen.hideAsync();
-  }, [ready]);
+    if (fontsReady) SplashScreen.hideAsync();
+  }, [fontsReady]);
 
-  if (!ready) return null;
+  if (!fontsReady) return null;
 
   if (failed) {
     return (
@@ -46,11 +50,14 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={styles.root}>
-      <Stack screenOptions={{ headerShown: false, contentStyle: styles.content }}>
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="transaction-form" options={{ presentation: 'modal' }} />
-      </Stack>
+      {dataReady ? (
+        <Stack screenOptions={{ headerShown: false, contentStyle: styles.content }}>
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="transaction-form" options={{ presentation: 'modal' }} />
+        </Stack>
+      ) : null}
       <ToastHost />
+      {dataReady ? null : <AppSplash />}
       <StatusBar style="dark" />
     </GestureHandlerRootView>
   );
