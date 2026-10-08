@@ -26,7 +26,7 @@ export function CategoryIcon({ categoryId, size = 42, filled }: CategoryIconProp
           backgroundColor: filled ? category.color : withAlpha(category.color, '1C'),
         },
       ]}>
-      <Icon path={category.icon} size={size >= 50 ? 22 : 20} color={filled ? colors.onPrimary : category.color} />
+      <Icon icon={category.icon} size={size >= 50 ? 22 : 20} color={filled ? colors.onPrimary : category.color} />
     </View>
   );
 }

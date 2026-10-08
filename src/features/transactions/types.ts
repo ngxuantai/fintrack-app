@@ -1,3 +1,4 @@
+import type { LucideIcon } from '@/src/components/ui/icons';
 import type { categoryPalette } from '@/src/theme';
 
 export type TransactionType = 'expense' | 'income';
@@ -15,8 +16,7 @@ export type Category = {
   type: TransactionType;
   name: string;
   color: string;
-  /** SVG path (24×24 viewBox). */
-  icon: string;
+  icon: LucideIcon;
   order: number;
   isDefault: boolean;
   /** Hidden from pickers but still used to render older transactions. */

@@ -1,6 +1,7 @@
+import { categoryIcons } from '@/src/components/ui/icons';
 import { categoryPalette } from '@/src/theme';
 
-import { CATEGORY_ICONS, DEFAULT_CATEGORIES } from '../constants';
+import { DEFAULT_CATEGORIES } from '../constants';
 import type { Category, CategoryId } from '../types';
 
 /** Built-in categories, shared by every user and never stored in Firestore. */
@@ -9,7 +10,7 @@ export const DEFAULT_CATEGORY_LIST: Category[] = DEFAULT_CATEGORIES.map((c, orde
   type: c.type,
   name: c.name,
   color: categoryPalette[c.color],
-  icon: CATEGORY_ICONS[c.icon],
+  icon: categoryIcons[c.icon],
   order,
   isDefault: true,
   archived: false,
@@ -34,7 +35,7 @@ export function resolveCategory(categoryById: Record<string, Category>, id: Cate
       type: 'expense',
       name: 'Không rõ',
       color: categoryPalette.gray,
-      icon: CATEGORY_ICONS.dots,
+      icon: categoryIcons.dots,
       order: 0,
       isDefault: false,
       archived: true,

@@ -1,9 +1,10 @@
 import { documentId, onSnapshot, query, where, type DocumentData, type DocumentSnapshot } from 'firebase/firestore';
 
 import { addMonths, toISODate, toMonthKey } from '@/src/lib/date';
+import { categoryIcons } from '@/src/components/ui/icons';
 import { categoryPalette } from '@/src/theme';
 
-import { CATEGORY_ICONS, SYNCED_MONTHS, WALLET_IDS } from '../constants';
+import { SYNCED_MONTHS, WALLET_IDS } from '../constants';
 import { financeStore } from '../stores/finance-store';
 import type { Account, Category, MonthlyStats, Transaction, WalletId } from '../types';
 import { mergeCategories } from '../utils/category';
@@ -29,7 +30,7 @@ function toCategory(snap: DocumentSnapshot): Category {
     type: d.type,
     name: d.name ?? '',
     color: categoryPalette[d.color as keyof typeof categoryPalette] ?? categoryPalette.gray,
-    icon: CATEGORY_ICONS[d.icon as keyof typeof CATEGORY_ICONS] ?? CATEGORY_ICONS.dots,
+    icon: categoryIcons[d.icon as keyof typeof categoryIcons] ?? categoryIcons.dots,
     order: d.order ?? 0,
     isDefault: false,
     archived: !!d.archived,
